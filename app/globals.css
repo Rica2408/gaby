@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0b0b0d;
+  --background-soft: #141416;
+  --foreground: #f5f4f2;
+  --foreground-dim: #a8a6a3;
+  --line: #2a2a2d;
+  --accent-red: #e11d48;
+  --accent-purple: #7c3aed;
+  --accent-gradient: linear-gradient(135deg, var(--accent-red), var(--accent-purple));
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-soft: var(--background-soft);
+  --color-foreground: var(--foreground);
+  --color-foreground-dim: var(--foreground-dim);
+  --color-line: var(--line);
+  --color-accent-red: var(--accent-red);
+  --color-accent-purple: var(--accent-purple);
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-inter);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.font-serif-display {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.text-gradient {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-accent {
+  background: var(--accent-gradient);
+}
+
+.btn-accent {
+  background: var(--accent-gradient);
+  color: #fff;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn-accent:active {
+  transform: scale(0.97);
+}
+
+.btn-accent:hover {
+  filter: brightness(1.1);
+}
+
+.card-surface {
+  background: var(--background-soft);
+  border: 1px solid var(--line);
+}
+
+@keyframes float-drift {
+  0% {
+    transform: translate(0, 0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translate(var(--dx, 12px), var(--dy, -14px)) rotate(var(--rot, 0deg));
+  }
+  100% {
+    transform: translate(0, 0) rotate(var(--rot, 0deg));
+  }
+}
+
+.easter-egg {
+  animation: float-drift var(--dur, 14s) ease-in-out infinite;
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.heart-pop {
+  animation: heart-pop 0.4s ease-out;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
