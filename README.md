@@ -1,9 +1,9 @@
 # La propuesta
 
-Sitio interactivo (Next.js + Tailwind) con 4 juegos estilo LinkedIn
-(Queens, Tango, Crossclimb, Pinpoint). Al resolver cada juego se desbloquea
-una pregunta sobre su historia; al responderla bien se revela una pista en
-emoji que lleva hasta la carta.
+Sitio interactivo (Next.js + Tailwind) con 4 juegos (Queens, Tango, Sudoku,
+Pinpoint). Al resolver cada juego se desbloquea una pregunta sobre su
+historia; al responderla bien se revela una pista en emoji que lleva hasta
+la carta.
 
 ## Antes de jugarlo en vivo — checklist
 
@@ -28,6 +28,17 @@ npm run dev
 
 Abre [http://localhost:3000](http://localhost:3000) — pruébalo tú mismo
 completo antes de pasárselo a ella.
+
+### Modo admin (para probar sin resolver los juegos)
+
+Abre la página con `?admin=1` al final de la liga, por ejemplo
+`http://localhost:3000/?admin=1`. Te aparece un botoncito gris "🔧" abajo
+que salta la contraseña, el juego actual, la pregunta actual, o te manda
+directo al final — así puedes revisar todo el recorrido rápido sin
+resolver nada.
+
+**No le mandes esa liga con `?admin=1` a ella** — si la abre así, también
+puede saltarse los juegos. Comparte la liga normal (sin `?admin=1`).
 
 ## Publicar (para poder abrirlo desde el iPad)
 

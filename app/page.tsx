@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CHAPTERS } from "@/lib/story";
 import EasterEggBackground from "@/components/EasterEggBackground";
 import ProgressHearts from "@/components/ProgressHearts";
+import AdminSkip from "@/components/AdminSkip";
 import GateScreen from "@/components/GateScreen";
 import ChapterIntro from "@/components/ChapterIntro";
 import QuestionGate from "@/components/QuestionGate";
@@ -36,6 +37,7 @@ const INITIAL_STATE: AppState = { screen: "gate", chapterIdx: 0, phase: "intro" 
 export default function Home() {
   const [state, setState] = useState<AppState>(INITIAL_STATE);
   const [hydrated, setHydrated] = useState(false);
+  const [adminMode, setAdminMode] = useState(false);
 
   useEffect(() => {
     try {
@@ -45,6 +47,8 @@ export default function Home() {
     } catch {
       // ignore corrupt storage
     }
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("admin") === "1") setAdminMode(true);
     setHydrated(true);
   }, []);
 
@@ -101,6 +105,13 @@ export default function Home() {
           <GateScreen onUnlock={() => goTo({ screen: "journey", chapterIdx: 0, phase: "intro" })} />
         )}
 
+        {adminMode && state.screen === "gate" && (
+          <AdminSkip
+            label="Saltar contraseña"
+            onSkip={() => goTo({ screen: "journey", chapterIdx: 0, phase: "intro" })}
+          />
+        )}
+
         {state.screen === "journey" && chapter && state.phase === "intro" && (
           <ChapterIntro chapter={chapter} onStart={() => goTo({ phase: "game" })} />
         )}
@@ -111,8 +122,16 @@ export default function Home() {
           </div>
         )}
 
+        {adminMode && state.screen === "journey" && state.phase === "game" && (
+          <AdminSkip label="Saltar juego" onSkip={handleGameComplete} />
+        )}
+
         {state.screen === "journey" && chapter && state.phase === "question" && (
           <QuestionGate chapter={chapter} onCorrect={handleQuestionCorrect} />
+        )}
+
+        {adminMode && state.screen === "journey" && state.phase === "question" && (
+          <AdminSkip label="Saltar pregunta" onSkip={handleQuestionCorrect} />
         )}
 
         {state.screen === "journey" && chapter && state.phase === "clue" && (
@@ -121,6 +140,10 @@ export default function Home() {
 
         {state.screen === "final" && <FinalReveal />}
       </div>
+
+      {adminMode && state.screen === "journey" && (
+        <AdminSkip label="Ir al final" side="left" onSkip={() => goTo({ screen: "final" })} />
+      )}
     </div>
   );
 }
