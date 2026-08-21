@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CHAPTERS } from "@/lib/story";
+import { vibrate } from "@/lib/haptics";
 import EasterEggBackground from "@/components/EasterEggBackground";
 import ProgressHearts from "@/components/ProgressHearts";
 import AdminSkip from "@/components/AdminSkip";
@@ -73,15 +74,18 @@ export default function Home() {
   }
 
   function handleGameComplete() {
+    vibrate(30);
     goTo({ phase: "question" });
   }
 
   function handleQuestionCorrect() {
+    vibrate(30);
     goTo({ phase: "clue" });
   }
 
   function handleClueContinue() {
     if (isLastChapter) {
+      vibrate([40, 60, 40, 60, 140]);
       goTo({ screen: "final" });
     } else {
       goTo({ chapterIdx: state.chapterIdx + 1, phase: "intro" });
@@ -102,7 +106,12 @@ export default function Home() {
 
       <div className="relative z-10 flex flex-1 flex-col">
         {state.screen === "gate" && (
-          <GateScreen onUnlock={() => goTo({ screen: "journey", chapterIdx: 0, phase: "intro" })} />
+          <GateScreen
+            onUnlock={() => {
+              vibrate(30);
+              goTo({ screen: "journey", chapterIdx: 0, phase: "intro" });
+            }}
+          />
         )}
 
         {adminMode && state.screen === "gate" && (

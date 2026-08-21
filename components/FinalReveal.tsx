@@ -2,10 +2,20 @@
 
 import { useState } from "react";
 import { CHAPTERS } from "@/lib/story";
+import { vibrate } from "@/lib/haptics";
 import PhotoGallery from "./PhotoGallery";
+import Confetti from "./Confetti";
 
 export default function FinalReveal() {
   const [confirmed, setConfirmed] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  function handleFound() {
+    setConfirmed(true);
+    setShowConfetti(true);
+    vibrate([40, 60, 40, 60, 140]);
+    setTimeout(() => setShowConfetti(false), 4000);
+  }
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center gap-6">
@@ -31,7 +41,7 @@ export default function FinalReveal() {
 
       {!confirmed ? (
         <button
-          onClick={() => setConfirmed(true)}
+          onClick={handleFound}
           className="fade-up btn-accent rounded-full px-6 py-3 font-medium"
         >
           Ya la encontré ❤️
@@ -41,6 +51,8 @@ export default function FinalReveal() {
           Ahora solo falta que me des tu respuesta, en persona.
         </p>
       )}
+
+      {showConfetti && <Confetti />}
     </div>
   );
 }
