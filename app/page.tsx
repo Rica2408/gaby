@@ -11,16 +11,17 @@ import ChapterIntro from "@/components/ChapterIntro";
 import QuestionGate from "@/components/QuestionGate";
 import ClueReveal from "@/components/ClueReveal";
 import FinalReveal from "@/components/FinalReveal";
+import TimedGame from "@/components/TimedGame";
 import Queens from "@/components/games/Queens";
 import Tango from "@/components/games/Tango";
 import Sudoku from "@/components/games/Sudoku";
-import Pinpoint from "@/components/games/Pinpoint";
+import Zip from "@/components/games/Zip";
 
 const GAME_COMPONENTS = {
   queens: Queens,
   tango: Tango,
   sudoku: Sudoku,
-  pinpoint: Pinpoint,
+  zip: Zip,
 } as const;
 
 type Phase = "intro" | "game" | "question" | "clue";
@@ -30,10 +31,11 @@ interface AppState {
   screen: Screen;
   chapterIdx: number;
   phase: Phase;
+  gameTimes: number[];
 }
 
 const STORAGE_KEY = "proposal-progress-v1";
-const INITIAL_STATE: AppState = { screen: "gate", chapterIdx: 0, phase: "intro" };
+const INITIAL_STATE: AppState = { screen: "gate", chapterIdx: 0, phase: "intro", gameTimes: [] };
 
 export default function Home() {
   const [state, setState] = useState<AppState>(INITIAL_STATE);
@@ -44,7 +46,11 @@ export default function Home() {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync from localStorage on mount
-      if (raw) setState(JSON.parse(raw) as AppState);
+      if (raw) {
+        const parsed = JSON.parse(raw) as AppState;
+        if (!Array.isArray(parsed.gameTimes)) parsed.gameTimes = [];
+        setState(parsed);
+      }
     } catch {
       // ignore corrupt storage
     }
@@ -55,7 +61,11 @@ export default function Home() {
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // ignore quota / circular data
+    }
   }, [state, hydrated]);
 
   if (!hydrated) {
@@ -73,9 +83,14 @@ export default function Home() {
     setState((prev) => ({ ...prev, ...next }));
   }
 
-  function handleGameComplete() {
+  function handleGameComplete(elapsedMs = 0) {
     vibrate(30);
-    goTo({ phase: "question" });
+    const time = typeof elapsedMs === "number" && Number.isFinite(elapsedMs) ? elapsedMs : 0;
+    setState((prev) => {
+      const gameTimes = [...prev.gameTimes];
+      gameTimes[prev.chapterIdx] = time;
+      return { ...prev, phase: "question", gameTimes };
+    });
   }
 
   function handleQuestionCorrect() {
@@ -127,7 +142,9 @@ export default function Home() {
 
         {state.screen === "journey" && chapter && state.phase === "game" && GameComponent && (
           <div className="flex flex-1 flex-col items-center justify-center px-6 py-10">
-            <GameComponent onComplete={handleGameComplete} />
+            <TimedGame key={state.chapterIdx} onComplete={handleGameComplete}>
+              {(onComplete) => <GameComponent onComplete={onComplete} />}
+            </TimedGame>
           </div>
         )}
 
@@ -136,7 +153,11 @@ export default function Home() {
         )}
 
         {state.screen === "journey" && chapter && state.phase === "question" && (
-          <QuestionGate chapter={chapter} onCorrect={handleQuestionCorrect} />
+          <QuestionGate
+            chapter={chapter}
+            elapsedMs={state.gameTimes[state.chapterIdx]}
+            onCorrect={handleQuestionCorrect}
+          />
         )}
 
         {adminMode && state.screen === "journey" && state.phase === "question" && (
@@ -147,7 +168,7 @@ export default function Home() {
           <ClueReveal chapter={chapter} isLast={isLastChapter} onContinue={handleClueContinue} />
         )}
 
-        {state.screen === "final" && <FinalReveal />}
+        {state.screen === "final" && <FinalReveal gameTimes={state.gameTimes} />}
       </div>
 
       {adminMode && state.screen === "journey" && (

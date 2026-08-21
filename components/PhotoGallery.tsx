@@ -20,18 +20,23 @@ export default function PhotoGallery({ photos = FINAL_GALLERY_PHOTOS }: PhotoGal
     });
   }
 
-  const visiblePhotos = photos.filter((_, i) => !broken.has(i));
+  const visiblePhotos = photos
+    .map((src, i) => ({ src, i }))
+    .filter(({ i }) => !broken.has(i));
   if (visiblePhotos.length === 0) return null;
 
   return (
     <div className="w-full max-w-sm">
       <div className="grid grid-cols-3 gap-1.5">
-        {photos.map((src, i) =>
-          broken.has(i) ? null : (
+        {visiblePhotos.map(({ src, i }, idx) => {
+          const isLoneLast = idx === visiblePhotos.length - 1 && visiblePhotos.length % 3 === 1;
+          return (
             <button
               key={src}
               onClick={() => toggle(i)}
-              className="group aspect-square overflow-hidden rounded-md border border-line transition-shadow duration-300 hover:shadow-[0_0_0_2px_var(--accent-purple)] active:scale-95"
+              className={`group aspect-square overflow-hidden rounded-md border border-line transition-shadow duration-300 hover:shadow-[0_0_0_2px_var(--accent-purple)] active:scale-95 ${
+                isLoneLast ? "col-start-2" : ""
+              }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -40,13 +45,13 @@ export default function PhotoGallery({ photos = FINAL_GALLERY_PHOTOS }: PhotoGal
                 onError={() =>
                   setBroken((prev) => new Set(prev).add(i))
                 }
-                className={`h-full w-full object-cover transition-all duration-500 group-hover:scale-110 ${
+                className={`h-full w-full object-cover object-center transition-all duration-500 group-hover:scale-110 ${
                   revealed.has(i) ? "grayscale-0 scale-105" : "grayscale group-hover:grayscale-0"
                 }`}
               />
             </button>
-          )
-        )}
+          );
+        })}
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ interface AdminSkipProps {
 export default function AdminSkip({ label, onSkip, side = "right" }: AdminSkipProps) {
   return (
     <button
-      onClick={onSkip}
+      onClick={() => onSkip()}
       className={`btn-ghost fixed bottom-4 z-50 rounded-full bg-background-soft/90 px-3 py-1.5 text-xs shadow-lg backdrop-blur ${
         side === "right" ? "right-4" : "left-4"
       }`}

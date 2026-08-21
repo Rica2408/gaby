@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatElapsed, useStopwatch } from "@/lib/stopwatch";
 
 const N = 6;
 
@@ -68,13 +69,14 @@ function checkWin(board: CellValue[][]): boolean {
 }
 
 interface TangoProps {
-  onComplete: () => void;
+  onComplete: (elapsedMs: number) => void;
 }
 
 export default function Tango({ onComplete }: TangoProps) {
   const initial = useMemo(() => buildInitial(), []);
   const [board, setBoard] = useState<CellValue[][]>(initial);
   const [won, setWon] = useState(false);
+  const timer = useStopwatch(!won);
 
   function handleTap(r: number, c: number) {
     if (won || isGiven(r, c)) return;
@@ -86,7 +88,8 @@ export default function Tango({ onComplete }: TangoProps) {
       next[r][c] = order[(idx + 1) % order.length];
       if (checkWin(next)) {
         setWon(true);
-        setTimeout(onComplete, 900);
+        const ms = timer.snapshot();
+        onComplete(ms);
       }
       return next;
     });
@@ -119,8 +122,8 @@ export default function Tango({ onComplete }: TangoProps) {
         )}
       </div>
       {won && (
-        <p className="fade-up text-gradient font-serif-display italic text-lg">
-          Sol y luna, siempre en equilibrio.
+        <p className="fade-up text-gradient font-serif-display italic text-lg text-center">
+          Lo lograste en {formatElapsed(timer.ms)}
         </p>
       )}
     </div>

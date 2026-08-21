@@ -6,7 +6,7 @@ se reparten así:
 
 - **`9.jpg`** → fondo de la pantalla de entrada (la de la contraseña).
 - **`1.jpg`, `2.jpg`, `5.jpg`, `8.jpg`** → una foto por cada intro de
-  capítulo (Queens, Tango, Sudoku, Pinpoint). Se configura en
+  capítulo (Queens, Tango, Sudoku, Zip). Se configura en
   `lib/story.ts`, campo `introPhoto` de cada capítulo.
 - **`3.jpg`, `4.jpg`, `6.jpg`, `7.jpg`** → galería del reveal final.
   Se configura en `lib/story.ts`, constante `FINAL_GALLERY_PHOTOS`.

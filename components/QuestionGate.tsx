@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { checkAnswer, type Chapter } from "@/lib/story";
+import { formatElapsed } from "@/lib/stopwatch";
 
 interface QuestionGateProps {
   chapter: Chapter;
+  elapsedMs?: number;
   onCorrect: () => void;
 }
 
-export default function QuestionGate({ chapter, onCorrect }: QuestionGateProps) {
+export default function QuestionGate({ chapter, elapsedMs, onCorrect }: QuestionGateProps) {
   const [value, setValue] = useState("");
   const [shake, setShake] = useState(false);
 
@@ -23,6 +25,11 @@ export default function QuestionGate({ chapter, onCorrect }: QuestionGateProps) 
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center gap-6">
+      {elapsedMs != null && elapsedMs > 0 && (
+        <p className="fade-up font-mono text-sm tabular-nums tracking-widest text-accent-purple">
+          Lo resolviste en {formatElapsed(elapsedMs)}
+        </p>
+      )}
       <p className="fade-up text-xs uppercase tracking-[0.3em] text-foreground-dim">
         Para seguir
       </p>

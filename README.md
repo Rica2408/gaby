@@ -1,7 +1,7 @@
 # La propuesta
 
 Sitio interactivo (Next.js + Tailwind) con 4 juegos (Queens, Tango, Sudoku,
-Pinpoint). Al resolver cada juego se desbloquea una pregunta sobre su
+Zip). Al resolver cada juego se desbloquea una pregunta sobre su
 historia; al responderla bien se revela una pista en emoji que lleva hasta
 la carta.
 

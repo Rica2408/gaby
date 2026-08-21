@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatElapsed, useStopwatch } from "@/lib/stopwatch";
 
 const N = 6;
 
@@ -51,7 +52,7 @@ function checkWin(cells: CellState[][]): boolean {
 }
 
 interface QueensProps {
-  onComplete: () => void;
+  onComplete: (elapsedMs: number) => void;
 }
 
 export default function Queens({ onComplete }: QueensProps) {
@@ -61,6 +62,7 @@ export default function Queens({ onComplete }: QueensProps) {
   );
   const [cells, setCells] = useState<CellState[][]>(emptyBoard);
   const [won, setWon] = useState(false);
+  const timer = useStopwatch(!won);
 
   function handleTap(r: number, c: number) {
     if (won) return;
@@ -69,7 +71,8 @@ export default function Queens({ onComplete }: QueensProps) {
       next[r][c] = ((next[r][c] + 1) % 3) as CellState;
       if (checkWin(next)) {
         setWon(true);
-        setTimeout(onComplete, 900);
+        const ms = timer.snapshot();
+        onComplete(ms);
       }
       return next;
     });
@@ -100,8 +103,8 @@ export default function Queens({ onComplete }: QueensProps) {
         )}
       </div>
       {won && (
-        <p className="fade-up text-gradient font-serif-display italic text-lg">
-          Perfecto equilibrio, como nosotros.
+        <p className="fade-up text-gradient font-serif-display italic text-lg text-center">
+          Lo lograste en {formatElapsed(timer.ms)}
         </p>
       )}
     </div>
