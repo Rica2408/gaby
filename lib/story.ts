@@ -8,6 +8,18 @@
 // Palabra clave para entrar al sitio. Cámbiala por algo con significado.
 export const ENTRY_PASSCODE = "SIYAY"; // TODO: pon la palabra clave real
 
+// Foto de fondo de la pantalla de entrada.
+export const GATE_PHOTO = "/photos/9.jpg";
+
+// Fotos que quedan para la galería del reveal final (las que no se usan
+// como fondo de entrada ni como foto de cada capítulo).
+export const FINAL_GALLERY_PHOTOS = [
+  "/photos/3.jpg",
+  "/photos/4.jpg",
+  "/photos/6.jpg",
+  "/photos/7.jpg",
+];
+
 export type AnswerType = "date" | "number" | "text";
 
 export type GameId = "queens" | "tango" | "sudoku" | "pinpoint";
@@ -17,6 +29,7 @@ export interface Chapter {
   game: GameId;
   gameTitle: string;
   gameIntro: string;
+  introPhoto?: string;
   clueEmoji: string;
   clueText: string;
   question: string;
@@ -32,6 +45,7 @@ export const CHAPTERS: Chapter[] = [
     gameTitle: "Queens",
     gameIntro:
       "Una reina por fila, una por columna, una por color. Como nosotros: cada quien en su lugar, pero siempre en el mismo tablero.",
+    introPhoto: "/photos/1.jpg",
     clueEmoji: "🚗",
     clueText: "Ahí donde empezó todo esto, está la primera señal...",
     question: "¿En qué fecha fue nuestro primer beso?",
@@ -45,6 +59,7 @@ export const CHAPTERS: Chapter[] = [
     gameTitle: "Tango",
     gameIntro:
       "Equilibrio: ni muchos soles, ni muchas lunas. Solo el balance justo para que todo encaje.",
+    introPhoto: "/photos/2.jpg",
     clueEmoji: "🎒",
     clueText: "Un poco más cerca... busca donde cargamos lo importante.",
     question:
@@ -59,6 +74,7 @@ export const CHAPTERS: Chapter[] = [
     gameTitle: "Sudoku",
     gameIntro:
       "Cada número en su lugar exacto, ni uno de más ni uno de menos. Así encajamos nosotros.",
+    introPhoto: "/photos/5.jpg",
     clueEmoji: "💳",
     clueText: "Ya casi... revisa bien dentro de donde guardamos lo que más cuidamos.",
     question:
@@ -72,6 +88,7 @@ export const CHAPTERS: Chapter[] = [
     gameTitle: "Pinpoint",
     gameIntro:
       "Con cada pista se revela un poco más, hasta que el punto en común queda claro.",
+    introPhoto: "/photos/8.jpg",
     clueEmoji: "💌",
     clueText: "Ahí está. Ve por ella.",
     question:

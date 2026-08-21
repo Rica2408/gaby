@@ -1,18 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { FINAL_GALLERY_PHOTOS } from "@/lib/story";
 
-// Coloca tus fotos en /public/photos con estos nombres (o cambia la lista).
-const PHOTOS = [
-  "/photos/1.jpg",
-  "/photos/2.jpg",
-  "/photos/3.jpg",
-  "/photos/4.jpg",
-  "/photos/5.jpg",
-  "/photos/6.jpg",
-];
+interface PhotoGalleryProps {
+  photos?: string[];
+}
 
-export default function PhotoGallery() {
+export default function PhotoGallery({ photos = FINAL_GALLERY_PHOTOS }: PhotoGalleryProps) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [broken, setBroken] = useState<Set<number>>(new Set());
 
@@ -25,7 +20,7 @@ export default function PhotoGallery() {
     });
   }
 
-  const visiblePhotos = PHOTOS.filter((_, i) => !broken.has(i));
+  const visiblePhotos = photos.filter((_, i) => !broken.has(i));
   if (visiblePhotos.length === 0) return null;
 
   return (
@@ -34,7 +29,7 @@ export default function PhotoGallery() {
         Toca una foto para verla a color
       </p>
       <div className="grid grid-cols-3 gap-1.5">
-        {PHOTOS.map((src, i) =>
+        {photos.map((src, i) =>
           broken.has(i) ? null : (
             <button
               key={src}
