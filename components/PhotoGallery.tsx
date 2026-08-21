@@ -25,9 +25,6 @@ export default function PhotoGallery({ photos = FINAL_GALLERY_PHOTOS }: PhotoGal
 
   return (
     <div className="w-full max-w-sm">
-      <p className="text-xs text-foreground-dim text-center mb-2">
-        Toca una foto para verla a color
-      </p>
       <div className="grid grid-cols-3 gap-1.5">
         {photos.map((src, i) =>
           broken.has(i) ? null : (
