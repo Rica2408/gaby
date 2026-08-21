@@ -10,7 +10,7 @@ export const ENTRY_PASSCODE = "SIYAY"; // TODO: pon la palabra clave real
 
 export type AnswerType = "date" | "number" | "text";
 
-export type GameId = "queens" | "tango" | "crossclimb" | "pinpoint";
+export type GameId = "queens" | "tango" | "sudoku" | "pinpoint";
 
 export interface Chapter {
   id: number;
@@ -55,10 +55,10 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     id: 3,
-    game: "crossclimb",
-    gameTitle: "Crossclimb",
+    game: "sudoku",
+    gameTitle: "Sudoku",
     gameIntro:
-      "Sube un escalón a la vez, cambiando solo una letra. Así construimos esto, paso a paso.",
+      "Cada número en su lugar exacto, ni uno de más ni uno de menos. Así encajamos nosotros.",
     clueEmoji: "💳",
     clueText: "Ya casi... revisa bien dentro de donde guardamos lo que más cuidamos.",
     question:

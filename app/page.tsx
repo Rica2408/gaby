@@ -11,13 +11,13 @@ import ClueReveal from "@/components/ClueReveal";
 import FinalReveal from "@/components/FinalReveal";
 import Queens from "@/components/games/Queens";
 import Tango from "@/components/games/Tango";
-import Crossclimb from "@/components/games/Crossclimb";
+import Sudoku from "@/components/games/Sudoku";
 import Pinpoint from "@/components/games/Pinpoint";
 
 const GAME_COMPONENTS = {
   queens: Queens,
   tango: Tango,
-  crossclimb: Crossclimb,
+  sudoku: Sudoku,
   pinpoint: Pinpoint,
 } as const;
 
