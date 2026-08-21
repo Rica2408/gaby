@@ -42,7 +42,7 @@ export default function Pinpoint({ onComplete }: PinpointProps) {
     }
     setWrongTries((t) => t + 1);
     setShake(true);
-    setTimeout(() => setShake(false), 400);
+    setTimeout(() => setShake(false), 500);
     if (revealed < WORDS.length) {
       setRevealed((r) => r + 1);
     }
@@ -76,12 +76,12 @@ export default function Pinpoint({ onComplete }: PinpointProps) {
       </div>
 
       {!won && (
-        <div className={`flex gap-2 w-full ${shake ? "animate-pulse" : ""}`}>
+        <div className={`flex gap-2 w-full ${shake ? "shake" : ""}`}>
           <input
             value={guess}
             onChange={(e) => setGuess(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submitGuess()}
-            className="flex-1 rounded-md border border-line bg-background px-3 py-2 text-sm outline-none focus:border-accent-purple"
+            className="input-field flex-1 rounded-md border border-line bg-background px-3 py-2 text-sm outline-none focus:border-accent-purple"
             placeholder="¿Cuál es el tema?"
           />
           <button

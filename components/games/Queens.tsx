@@ -91,7 +91,7 @@ export default function Queens({ onComplete }: QueensProps) {
             <button
               key={`${r}-${c}`}
               onClick={() => handleTap(r, c)}
-              className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-md text-xl ${REGION_COLORS[REGIONS[r][c]]} border border-line active:scale-95 transition-transform`}
+              className={`game-cell flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-md text-xl ${REGION_COLORS[REGIONS[r][c]]} border border-line`}
               aria-label={`Celda fila ${r + 1} columna ${c + 1}`}
             >
               {val === 1 ? "👑" : val === 2 ? "✕" : ""}

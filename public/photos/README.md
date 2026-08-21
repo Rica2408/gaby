@@ -1,6 +1,10 @@
 # Fotos
 
-Pon aquí hasta 6 fotos con estos nombres exactos:
+Ya están puestas `1.jpg` a `5.jpg` (las que mandaste). Puedes agregar una
+`6.jpg` si quieres una sexta, o reemplazar cualquiera de las que ya están
+— mismo nombre, se sobreescribe.
+
+Nombres esperados (hasta 6 fotos):
 
 - `1.jpg`
 - `2.jpg`

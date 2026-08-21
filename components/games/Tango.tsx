@@ -107,7 +107,7 @@ export default function Tango({ onComplete }: TangoProps) {
                 key={`${r}-${c}`}
                 onClick={() => handleTap(r, c)}
                 disabled={given}
-                className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-md text-xl border border-line active:scale-95 transition-transform ${
+                className={`game-cell flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-md text-xl border border-line ${
                   given ? "bg-background-soft opacity-90" : "bg-background hover:bg-background-soft"
                 }`}
                 aria-label={`Celda fila ${r + 1} columna ${c + 1}`}

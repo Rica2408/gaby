@@ -39,7 +39,7 @@ export default function PhotoGallery() {
             <button
               key={src}
               onClick={() => toggle(i)}
-              className="aspect-square overflow-hidden rounded-md border border-line"
+              className="group aspect-square overflow-hidden rounded-md border border-line transition-shadow duration-300 hover:shadow-[0_0_0_2px_var(--accent-purple)] active:scale-95"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -48,8 +48,8 @@ export default function PhotoGallery() {
                 onError={() =>
                   setBroken((prev) => new Set(prev).add(i))
                 }
-                className={`h-full w-full object-cover transition-all duration-500 ${
-                  revealed.has(i) ? "grayscale-0 scale-105" : "grayscale"
+                className={`h-full w-full object-cover transition-all duration-500 group-hover:scale-110 ${
+                  revealed.has(i) ? "grayscale-0 scale-105" : "grayscale group-hover:grayscale-0"
                 }`}
               />
             </button>

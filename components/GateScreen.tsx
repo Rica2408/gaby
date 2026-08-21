@@ -20,7 +20,7 @@ export default function GateScreen({ onUnlock }: GateScreenProps) {
       onUnlock();
     } else {
       setShake(true);
-      setTimeout(() => setShake(false), 400);
+      setTimeout(() => setShake(false), 500);
     }
   }
 
@@ -34,12 +34,12 @@ export default function GateScreen({ onUnlock }: GateScreenProps) {
         <br />
         Pero te lo vas a tener que ganar.
       </h1>
-      <div className={`flex flex-col gap-3 w-full max-w-xs ${shake ? "animate-pulse" : ""}`}>
+      <div className={`flex flex-col gap-3 w-full max-w-xs ${shake ? "shake" : ""}`}>
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && submit()}
-          className="rounded-full border border-line bg-background-soft px-5 py-3 text-center outline-none focus:border-accent-purple"
+          className="input-field rounded-full border border-line bg-background-soft px-5 py-3 text-center outline-none focus:border-accent-purple"
           placeholder="Palabra clave"
           autoFocus
         />

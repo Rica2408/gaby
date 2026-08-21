@@ -109,13 +109,13 @@ export default function Sudoku({ onComplete }: SudokuProps) {
                 key={`${r}-${c}`}
                 onClick={() => selectCell(r, c)}
                 disabled={given}
-                className={`flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center text-xs sm:text-sm border border-line/60 ${
+                className={`game-cell flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center text-xs sm:text-sm border border-line/60 ${
                   thickRight ? "border-r-2 border-r-line" : ""
                 } ${thickBottom ? "border-b-2 border-b-line" : ""} ${
                   given
                     ? "bg-background-soft text-foreground font-medium"
                     : isSelected
-                    ? "bg-accent-purple/30 text-foreground"
+                    ? "bg-accent-purple/30 text-foreground shadow-[inset_0_0_0_2px_var(--accent-purple)]"
                     : "bg-background text-gradient hover:bg-background-soft"
                 }`}
                 aria-label={`Celda fila ${r + 1} columna ${c + 1}`}
@@ -143,7 +143,7 @@ export default function Sudoku({ onComplete }: SudokuProps) {
           <button
             onClick={() => placeNumber(null)}
             disabled={!selected}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-sm border border-line disabled:opacity-30"
+            className="btn-ghost flex h-9 w-9 items-center justify-center rounded-md text-sm disabled:opacity-30"
             aria-label="Borrar"
           >
             ✕
