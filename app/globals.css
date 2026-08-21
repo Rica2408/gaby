@@ -1,0 +1,295 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0b0b0d;
+  --background-soft: #141416;
+  --foreground: #f5f4f2;
+  --foreground-dim: #a8a6a3;
+  --line: #2a2a2d;
+  --accent-red: #e11d48;
+  --accent-purple: #7c3aed;
+  --accent-gradient: linear-gradient(135deg, var(--accent-red), var(--accent-purple));
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-soft: var(--background-soft);
+  --color-foreground: var(--foreground);
+  --color-foreground-dim: var(--foreground-dim);
+  --color-line: var(--line);
+  --color-accent-red: var(--accent-red);
+  --color-accent-purple: var(--accent-purple);
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-inter);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  position: relative;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Ambient drifting glow behind everything */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  border-radius: 9999px;
+  filter: blur(70px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  width: 60vw;
+  height: 60vw;
+  max-width: 420px;
+  max-height: 420px;
+  top: -12%;
+  left: -14%;
+  background: radial-gradient(circle, var(--accent-red) 0%, transparent 70%);
+  opacity: 0.22;
+  animation: blob-drift-a 24s ease-in-out infinite;
+}
+
+body::after {
+  width: 55vw;
+  height: 55vw;
+  max-width: 380px;
+  max-height: 380px;
+  bottom: -12%;
+  right: -12%;
+  background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%);
+  opacity: 0.2;
+  animation: blob-drift-b 28s ease-in-out infinite;
+}
+
+@keyframes blob-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6vw, 8vh) scale(1.15);
+  }
+}
+
+@keyframes blob-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-5vw, -7vh) scale(1.1);
+  }
+}
+
+.font-serif-display {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.text-gradient {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-accent {
+  background: var(--accent-gradient);
+}
+
+.btn-accent {
+  position: relative;
+  overflow: hidden;
+  background: var(--accent-gradient);
+  color: #fff;
+  box-shadow: 0 6px 24px -8px rgba(225, 29, 72, 0.5);
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.25s ease;
+}
+
+.btn-accent::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+
+.btn-accent:hover::after {
+  transform: translateX(120%);
+}
+
+.btn-accent:active {
+  transform: scale(0.96);
+}
+
+.btn-accent:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 8px 28px -6px rgba(124, 58, 237, 0.55);
+}
+
+.btn-ghost {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--foreground-dim);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--background-soft);
+  border-color: var(--accent-purple);
+  color: var(--foreground);
+}
+
+.btn-ghost:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.card-surface {
+  background: linear-gradient(160deg, var(--background-soft), rgba(20, 20, 22, 0.55));
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.65);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-field {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.input-field:focus {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+}
+
+.game-cell {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease,
+    border-color 0.2s ease;
+}
+
+.game-cell:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 2px var(--accent-purple);
+}
+
+.game-cell:active:not(:disabled) {
+  transform: scale(0.93);
+}
+
+@keyframes float-drift {
+  0% {
+    transform: translate(0, 0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translate(var(--dx, 12px), var(--dy, -14px)) rotate(var(--rot, 0deg));
+  }
+  100% {
+    transform: translate(0, 0) rotate(var(--rot, 0deg));
+  }
+}
+
+.easter-egg {
+  animation: float-drift var(--dur, 14s) ease-in-out infinite;
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.heart-pop {
+  animation: heart-pop 0.4s ease-out;
+}
+
+.sticker-pop {
+  opacity: 0;
+  animation: heart-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-8px);
+  }
+  40%,
+  60% {
+    transform: translateX(8px);
+  }
+}
+
+.shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(var(--rot, 360deg));
+    opacity: 0;
+  }
+}
+
+.confetti-piece {
+  animation: confetti-fall linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
