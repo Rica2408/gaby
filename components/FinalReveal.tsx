@@ -2,11 +2,16 @@
 
 import { useState } from "react";
 import { CHAPTERS } from "@/lib/story";
+import { formatElapsed } from "@/lib/stopwatch";
 import { vibrate } from "@/lib/haptics";
 import PhotoGallery from "./PhotoGallery";
 import Confetti from "./Confetti";
 
-export default function FinalReveal() {
+interface FinalRevealProps {
+  gameTimes: number[];
+}
+
+export default function FinalReveal({ gameTimes }: FinalRevealProps) {
   const [confirmed, setConfirmed] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -34,6 +39,26 @@ export default function FinalReveal() {
           </span>
         ))}
       </div>
+
+      {gameTimes.some((t) => t > 0) && (
+        <div
+          className="fade-up flex flex-col gap-1 text-sm text-foreground-dim"
+          style={{ animationDelay: "1.6s" }}
+        >
+          {CHAPTERS.map((c, i) =>
+            gameTimes[i] > 0 ? (
+              <p key={c.id} className="font-mono tabular-nums tracking-wide">
+                {c.gameTitle}: {formatElapsed(gameTimes[i])}
+              </p>
+            ) : null
+          )}
+          {gameTimes.filter((t) => t > 0).length > 1 && (
+            <p className="mt-1 font-mono tabular-nums tracking-wide text-foreground">
+              Total: {formatElapsed(gameTimes.reduce((a, b) => a + (b || 0), 0))}
+            </p>
+          )}
+        </div>
+      )}
 
       <h2
         className="fade-up font-serif-display italic text-2xl sm:text-3xl leading-snug max-w-sm"

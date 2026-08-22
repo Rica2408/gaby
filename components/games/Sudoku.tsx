@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatElapsed, useStopwatch } from "@/lib/stopwatch";
 
 const N = 9;
 
@@ -63,7 +64,7 @@ function checkWin(board: CellValue[][]): boolean {
 }
 
 interface SudokuProps {
-  onComplete: () => void;
+  onComplete: (elapsedMs: number) => void;
 }
 
 export default function Sudoku({ onComplete }: SudokuProps) {
@@ -71,6 +72,7 @@ export default function Sudoku({ onComplete }: SudokuProps) {
   const [board, setBoard] = useState<CellValue[][]>(initial);
   const [selected, setSelected] = useState<[number, number] | null>(null);
   const [won, setWon] = useState(false);
+  const timer = useStopwatch(!won);
 
   function selectCell(r: number, c: number) {
     if (won || isGiven(r, c)) return;
@@ -85,7 +87,8 @@ export default function Sudoku({ onComplete }: SudokuProps) {
       next[r][c] = n;
       if (checkWin(next)) {
         setWon(true);
-        setTimeout(onComplete, 900);
+        const ms = timer.snapshot();
+        onComplete(ms);
       }
       return next;
     });
@@ -152,8 +155,8 @@ export default function Sudoku({ onComplete }: SudokuProps) {
       )}
 
       {won && (
-        <p className="fade-up text-gradient font-serif-display italic text-lg">
-          Cada número en su lugar. Como nosotros.
+        <p className="fade-up text-gradient font-serif-display italic text-lg text-center">
+          Lo lograste en {formatElapsed(timer.ms)}
         </p>
       )}
     </div>

@@ -6,7 +6,7 @@
 // ============================================================================
 
 // Palabra clave para entrar al sitio. Cámbiala por algo con significado.
-export const ENTRY_PASSCODE = "SIYAY"; // TODO: pon la palabra clave real
+export const ENTRY_PASSCODE = "GR"; // TODO: pon la palabra clave real
 
 // Foto de fondo de la pantalla de entrada.
 export const GATE_PHOTO = "/photos/9.jpg";
@@ -22,7 +22,7 @@ export const FINAL_GALLERY_PHOTOS = [
 
 export type AnswerType = "date" | "number" | "text";
 
-export type GameId = "queens" | "tango" | "sudoku" | "pinpoint";
+export type GameId = "queens" | "tango" | "sudoku" | "zip";
 
 export interface Chapter {
   id: number;
@@ -30,6 +30,8 @@ export interface Chapter {
   gameTitle: string;
   gameIntro: string;
   introPhoto?: string;
+  introPhotoPosition?: string;
+  introSticker?: string;
   clueEmoji: string;
   clueText: string;
   question: string;
@@ -43,52 +45,51 @@ export const CHAPTERS: Chapter[] = [
     id: 1,
     game: "queens",
     gameTitle: "Queens",
-    gameIntro:
-      "Una reina por fila, una por columna, una por color. Como nosotros: cada quien en su lugar, pero siempre en el mismo tablero.",
+    gameIntro: "Hazlo lo más rápido que puedas, marrana.",
     introPhoto: "/photos/1.jpg",
     clueEmoji: "🚗",
     clueText: "Ahí donde empezó todo esto, está la primera señal...",
     question: "¿En qué fecha fue nuestro primer beso?",
     answerType: "date",
-    acceptedAnswers: ["TODO-DD/MM/AAAA"], // TODO: pon la fecha real, formato DD/MM/AAAA
+    acceptedAnswers: ["20/06/2026"], // TODO: pon la fecha real, formato DD/MM/AAAA
     answerHint: "Formato DD/MM/AAAA",
   },
   {
     id: 2,
     game: "tango",
     gameTitle: "Tango",
-    gameIntro:
-      "Equilibrio: ni muchos soles, ni muchas lunas. Solo el balance justo para que todo encaje.",
+    gameIntro: "Eres mi persona favorita.",
     introPhoto: "/photos/2.jpg",
     clueEmoji: "🎒",
     clueText: "Un poco más cerca... busca donde cargamos lo importante.",
     question:
       "Cada carrera que hemos corrido juntos ha sido una meta más que cruzamos como equipo. ¿Cuántas llevamos hasta hoy?",
     answerType: "number",
-    acceptedAnswers: ["0"], // TODO: pon el número real de carreras
+    acceptedAnswers: ["6"], // TODO: pon el número real de carreras
     answerHint: "Solo el número",
   },
   {
     id: 3,
     game: "sudoku",
     gameTitle: "Sudoku",
-    gameIntro:
-      "Cada número en su lugar exacto, ni uno de más ni uno de menos. Así encajamos nosotros.",
+    gameIntro: "Hueles a humedad, marrana. 😘",
     introPhoto: "/photos/5.jpg",
+    introSticker: "💋",
     clueEmoji: "💳",
     clueText: "Ya casi... revisa bien dentro de donde guardamos lo que más cuidamos.",
     question:
-      "No importa el ritmo, siempre llegamos juntos — así me lo dijiste tú un día con un regalo. ¿Qué animal me diste ese día?",
+      "No importa el ritmo, siempre llegamos juntos",
     answerType: "text",
     acceptedAnswers: ["tortuga"],
   },
   {
     id: 4,
-    game: "pinpoint",
-    gameTitle: "Pinpoint",
+    game: "zip",
+    gameTitle: "Zip",
     gameIntro:
-      "Con cada pista se revela un poco más, hasta que el punto en común queda claro.",
+      "Quiero estar contigo para siempre. No solo en lo fácil: en lo quieto, en lo que duele y en lo que todavía no existe.",
     introPhoto: "/photos/8.jpg",
+    introPhotoPosition: "50% 55%",
     clueEmoji: "💌",
     clueText: "Ahí está. Ve por ella.",
     question:

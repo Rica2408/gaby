@@ -16,15 +16,35 @@ export default function ChapterIntro({ chapter, onStart }: ChapterIntroProps) {
       <p className="fade-up text-xs uppercase tracking-[0.3em] text-foreground-dim">
         Capítulo {chapter.id} · {chapter.gameTitle}
       </p>
-      {chapter.introPhoto && !photoBroken && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={chapter.introPhoto}
-          alt=""
-          onError={() => setPhotoBroken(true)}
-          className="fade-up h-36 w-36 rounded-full border border-line object-cover shadow-[0_0_30px_-8px_rgba(124,58,237,0.5)] grayscale transition-all duration-500 hover:grayscale-0 sm:h-44 sm:w-44"
-        />
-      )}
+      {(chapter.introPhoto && !photoBroken) || chapter.introSticker ? (
+        <div className="fade-up relative">
+          {chapter.introPhoto && !photoBroken && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={chapter.introPhoto}
+              alt=""
+              onError={() => setPhotoBroken(true)}
+              className="h-36 w-36 rounded-full border border-line object-cover shadow-[0_0_30px_-8px_rgba(124,58,237,0.5)] grayscale transition-all duration-500 hover:grayscale-0 sm:h-44 sm:w-44"
+              style={
+                chapter.introPhotoPosition
+                  ? { objectPosition: chapter.introPhotoPosition }
+                  : undefined
+              }
+            />
+          )}
+          {chapter.introSticker && (
+            <span
+              className="sticker-pop pointer-events-none absolute -right-2 -bottom-1 drop-shadow-md"
+              style={{ animationDelay: "0.35s" }}
+              aria-hidden
+            >
+              <span className="inline-block -rotate-[18deg] text-5xl sm:text-6xl">
+                {chapter.introSticker}
+              </span>
+            </span>
+          )}
+        </div>
+      ) : null}
       <p className="fade-up font-serif-display italic text-2xl sm:text-3xl leading-snug max-w-sm">
         {chapter.gameIntro}
       </p>
