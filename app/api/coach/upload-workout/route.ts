@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildIntervalWorkoutPayload } from "@/lib/garminWorkout";
 import { uploadWorkoutToGarmin } from "@/lib/garminClient";
+import { parseMinSecToSeconds } from "@/lib/time";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -10,8 +11,10 @@ export async function POST(request: NextRequest) {
     name,
     warmupMinutes,
     repeats,
-    intervalMeters,
-    recoveryMeters,
+    intervalType,
+    intervalValue,
+    recoveryType,
+    recoveryValue,
     cooldownMinutes,
     scheduledDate,
   } = body ?? {};
@@ -24,12 +27,21 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const isIntervalTime = intervalType === "time";
+    const isRecoveryTime = recoveryType === "time";
+
     const payload = buildIntervalWorkoutPayload({
       name,
       warmupMinutes: Number(warmupMinutes) || 0,
       repeats: Number(repeats) || 0,
-      intervalMeters: Number(intervalMeters) || 0,
-      recoveryMeters: Number(recoveryMeters) || 0,
+      intervalType: isIntervalTime ? "time" : "distance",
+      intervalValue: isIntervalTime
+        ? parseMinSecToSeconds(String(intervalValue ?? ""))
+        : Number(intervalValue) || 0,
+      recoveryType: isRecoveryTime ? "time" : "distance",
+      recoveryValue: isRecoveryTime
+        ? parseMinSecToSeconds(String(recoveryValue ?? ""))
+        : Number(recoveryValue) || 0,
       cooldownMinutes: Number(cooldownMinutes) || 0,
     });
 

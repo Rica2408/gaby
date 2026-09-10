@@ -21,6 +21,8 @@ const END_CONDITION = {
 
 const NO_TARGET = { workoutTargetTypeId: 1, workoutTargetTypeKey: "no.target" } as const;
 
+export type IntervalUnit = "distance" | "time";
+
 interface ExecutableStep {
   type: "ExecutableStepDTO";
   stepOrder: number;
@@ -44,8 +46,12 @@ export interface GarminIntervalWorkoutParams {
   name: string;
   warmupMinutes: number;
   repeats: number;
-  intervalMeters: number;
-  recoveryMeters: number;
+  // intervalValue/recoveryValue are meters when the matching *Type is
+  // "distance", or seconds when it's "time".
+  intervalType: IntervalUnit;
+  intervalValue: number;
+  recoveryType: IntervalUnit;
+  recoveryValue: number;
   cooldownMinutes: number;
 }
 
@@ -55,47 +61,53 @@ export interface GarminWorkoutPayload {
   workoutSegments: [{ segmentOrder: 1; sportType: typeof SPORT_TYPE; workoutSteps: WorkoutStep[] }];
 }
 
+function buildTimedOrDistanceStep(
+  order: number,
+  stepType: (typeof STEP_TYPE)[keyof typeof STEP_TYPE],
+  unit: IntervalUnit,
+  value: number
+): ExecutableStep {
+  return {
+    type: "ExecutableStepDTO",
+    stepOrder: order,
+    stepType,
+    endCondition: unit === "time" ? END_CONDITION.time : END_CONDITION.distance,
+    endConditionValue: unit === "time" ? Math.round(value) : value,
+    targetType: NO_TARGET,
+  };
+}
+
 export function buildIntervalWorkoutPayload(
   params: GarminIntervalWorkoutParams
 ): GarminWorkoutPayload {
-  const { name, warmupMinutes, repeats, intervalMeters, recoveryMeters, cooldownMinutes } = params;
+  const {
+    name,
+    warmupMinutes,
+    repeats,
+    intervalType,
+    intervalValue,
+    recoveryType,
+    recoveryValue,
+    cooldownMinutes,
+  } = params;
 
   let order = 1;
   const steps: WorkoutStep[] = [];
 
   if (warmupMinutes > 0) {
-    steps.push({
-      type: "ExecutableStepDTO",
-      stepOrder: order++,
-      stepType: STEP_TYPE.warmup,
-      endCondition: END_CONDITION.time,
-      endConditionValue: Math.round(warmupMinutes * 60),
-      targetType: NO_TARGET,
-    });
+    steps.push(buildTimedOrDistanceStep(order++, STEP_TYPE.warmup, "time", warmupMinutes * 60));
   }
 
-  if (repeats > 0 && intervalMeters > 0) {
+  if (repeats > 0 && intervalValue > 0) {
     const repeatOrder = order++;
     const children: ExecutableStep[] = [
-      {
-        type: "ExecutableStepDTO",
-        stepOrder: order++,
-        stepType: STEP_TYPE.interval,
-        endCondition: END_CONDITION.distance,
-        endConditionValue: intervalMeters,
-        targetType: NO_TARGET,
-      },
+      buildTimedOrDistanceStep(order++, STEP_TYPE.interval, intervalType, intervalValue),
     ];
 
-    if (recoveryMeters > 0) {
-      children.push({
-        type: "ExecutableStepDTO",
-        stepOrder: order++,
-        stepType: STEP_TYPE.recovery,
-        endCondition: END_CONDITION.distance,
-        endConditionValue: recoveryMeters,
-        targetType: NO_TARGET,
-      });
+    if (recoveryValue > 0) {
+      children.push(
+        buildTimedOrDistanceStep(order++, STEP_TYPE.recovery, recoveryType, recoveryValue)
+      );
     }
 
     steps.push({
@@ -108,14 +120,7 @@ export function buildIntervalWorkoutPayload(
   }
 
   if (cooldownMinutes > 0) {
-    steps.push({
-      type: "ExecutableStepDTO",
-      stepOrder: order++,
-      stepType: STEP_TYPE.cooldown,
-      endCondition: END_CONDITION.time,
-      endConditionValue: Math.round(cooldownMinutes * 60),
-      targetType: NO_TARGET,
-    });
+    steps.push(buildTimedOrDistanceStep(order++, STEP_TYPE.cooldown, "time", cooldownMinutes * 60));
   }
 
   return {
