@@ -2,14 +2,18 @@
 
 import { useState, type FormEvent } from "react";
 
+type IntervalUnit = "distance" | "time";
+
 interface FormState {
   email: string;
   password: string;
   name: string;
   warmupMinutes: string;
   repeats: string;
-  intervalMeters: string;
-  recoveryMeters: string;
+  intervalType: IntervalUnit;
+  intervalValue: string;
+  recoveryType: IntervalUnit;
+  recoveryValue: string;
   cooldownMinutes: string;
   scheduledDate: string;
 }
@@ -20,8 +24,10 @@ const INITIAL: FormState = {
   name: "",
   warmupMinutes: "10",
   repeats: "6",
-  intervalMeters: "400",
-  recoveryMeters: "200",
+  intervalType: "distance",
+  intervalValue: "400",
+  recoveryType: "distance",
+  recoveryValue: "200",
   cooldownMinutes: "10",
   scheduledDate: "",
 };
@@ -32,7 +38,7 @@ export default function CoachPage() {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
-  function update<K extends keyof FormState>(key: K, value: string) {
+  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -140,24 +146,50 @@ export default function CoachPage() {
               className="input-field rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm text-foreground-dim">
-            Intervalo (m)
+        </div>
+
+        <div className="grid grid-cols-[auto_1fr] gap-3 items-end">
+          <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
+            Intervalo por
+            <select
+              value={form.intervalType}
+              onChange={(e) => update("intervalType", e.target.value as IntervalUnit)}
+              className="input-field w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
+            >
+              <option value="distance">Distancia</option>
+              <option value="time">Tiempo</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
+            {form.intervalType === "time" ? "Duración del intervalo (seg)" : "Distancia del intervalo (m)"}
             <input
               type="number"
               min={0}
-              value={form.intervalMeters}
-              onChange={(e) => update("intervalMeters", e.target.value)}
-              className="input-field rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
+              value={form.intervalValue}
+              onChange={(e) => update("intervalValue", e.target.value)}
+              className="input-field w-full min-w-0 rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm text-foreground-dim col-span-2">
-            Recuperación entre series (m)
+
+          <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
+            Recuperación por
+            <select
+              value={form.recoveryType}
+              onChange={(e) => update("recoveryType", e.target.value as IntervalUnit)}
+              className="input-field w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
+            >
+              <option value="distance">Distancia</option>
+              <option value="time">Tiempo</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
+            {form.recoveryType === "time" ? "Duración de la recuperación (seg)" : "Distancia de la recuperación (m)"}
             <input
               type="number"
               min={0}
-              value={form.recoveryMeters}
-              onChange={(e) => update("recoveryMeters", e.target.value)}
-              className="input-field rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
+              value={form.recoveryValue}
+              onChange={(e) => update("recoveryValue", e.target.value)}
+              className="input-field w-full min-w-0 rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
             />
           </label>
         </div>

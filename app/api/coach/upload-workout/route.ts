@@ -10,8 +10,10 @@ export async function POST(request: NextRequest) {
     name,
     warmupMinutes,
     repeats,
-    intervalMeters,
-    recoveryMeters,
+    intervalType,
+    intervalValue,
+    recoveryType,
+    recoveryValue,
     cooldownMinutes,
     scheduledDate,
   } = body ?? {};
@@ -28,8 +30,10 @@ export async function POST(request: NextRequest) {
       name,
       warmupMinutes: Number(warmupMinutes) || 0,
       repeats: Number(repeats) || 0,
-      intervalMeters: Number(intervalMeters) || 0,
-      recoveryMeters: Number(recoveryMeters) || 0,
+      intervalType: intervalType === "time" ? "time" : "distance",
+      intervalValue: Number(intervalValue) || 0,
+      recoveryType: recoveryType === "time" ? "time" : "distance",
+      recoveryValue: Number(recoveryValue) || 0,
       cooldownMinutes: Number(cooldownMinutes) || 0,
     });
 
