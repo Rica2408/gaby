@@ -21,11 +21,16 @@ const END_CONDITION = {
 
 const NO_TARGET = { workoutTargetTypeId: 1, workoutTargetTypeKey: "no.target" } as const;
 
-// A diferencia de los IDs de arriba (confirmados contra el comportamiento
-// real de Garmin), este "pace.zone" es una inferencia mía a partir de cómo
-// se documentan otros target types (power.zone, hr.zone) en proyectos de la
-// comunidad -- NO está verificado contra una cuenta real. Garmin guarda el
-// ritmo internamente como velocidad (m/s), de ahí la conversión.
+// workoutTargetTypeId 6 / "pace.zone" y la conversión de ritmo a velocidad
+// (m/s) confirmados contra dos fuentes reales: el enum TargetType.PACE_ZONE
+// de python-garminconnect (garminconnect/workout.py) y la lógica de
+// GarminGenJSON.html (proyecto ThomasRondof/GarminWorkoutAItoJSON), que
+// también confirma que targetValueOne/targetValueTwo van al mismo nivel que
+// targetType, no anidados adentro. El orden (rápido -> targetValueOne, lento
+// -> targetValueTwo) sigue el ejemplo concreto encontrado en ese código;
+// aun así, ninguna fuente es documentación oficial de Garmin, así que vale
+// la pena confirmarlo subiendo un entreno real y revisando cómo se ve en
+// Garmin Connect.
 const PACE_ZONE_TARGET = { workoutTargetTypeId: 6, workoutTargetTypeKey: "pace.zone" } as const;
 
 export type IntervalUnit = "distance" | "time";
@@ -104,8 +109,8 @@ function buildTimedOrDistanceStep(
 
   if (pace && pace.fastSecondsPerKm > 0 && pace.slowSecondsPerKm > 0) {
     step.targetType = PACE_ZONE_TARGET;
-    step.targetValueOne = paceSecondsPerKmToSpeedMps(pace.slowSecondsPerKm); // límite lento = velocidad mínima
-    step.targetValueTwo = paceSecondsPerKmToSpeedMps(pace.fastSecondsPerKm); // límite rápido = velocidad máxima
+    step.targetValueOne = paceSecondsPerKmToSpeedMps(pace.fastSecondsPerKm); // ritmo rápido = velocidad mayor
+    step.targetValueTwo = paceSecondsPerKmToSpeedMps(pace.slowSecondsPerKm); // ritmo lento = velocidad menor
   }
 
   return step;
