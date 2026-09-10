@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
     recoveryValue,
     cooldownMinutes,
     scheduledDate,
+    intervalPaceFast,
+    intervalPaceSlow,
   } = body ?? {};
 
   if (!email || !password || !name) {
@@ -29,6 +31,9 @@ export async function POST(request: NextRequest) {
   try {
     const isIntervalTime = intervalType === "time";
     const isRecoveryTime = recoveryType === "time";
+
+    const fastSecondsPerKm = parseMinSecToSeconds(String(intervalPaceFast ?? ""));
+    const slowSecondsPerKm = parseMinSecToSeconds(String(intervalPaceSlow ?? ""));
 
     const payload = buildIntervalWorkoutPayload({
       name,
@@ -43,6 +48,10 @@ export async function POST(request: NextRequest) {
         ? parseMinSecToSeconds(String(recoveryValue ?? ""))
         : Number(recoveryValue) || 0,
       cooldownMinutes: Number(cooldownMinutes) || 0,
+      intervalPace:
+        fastSecondsPerKm > 0 && slowSecondsPerKm > 0
+          ? { fastSecondsPerKm, slowSecondsPerKm }
+          : undefined,
     });
 
     const result = await uploadWorkoutToGarmin(

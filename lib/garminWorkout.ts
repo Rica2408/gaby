@@ -21,7 +21,27 @@ const END_CONDITION = {
 
 const NO_TARGET = { workoutTargetTypeId: 1, workoutTargetTypeKey: "no.target" } as const;
 
+// A diferencia de los IDs de arriba (confirmados contra el comportamiento
+// real de Garmin), este "pace.zone" es una inferencia mía a partir de cómo
+// se documentan otros target types (power.zone, hr.zone) en proyectos de la
+// comunidad -- NO está verificado contra una cuenta real. Garmin guarda el
+// ritmo internamente como velocidad (m/s), de ahí la conversión.
+const PACE_ZONE_TARGET = { workoutTargetTypeId: 6, workoutTargetTypeKey: "pace.zone" } as const;
+
 export type IntervalUnit = "distance" | "time";
+
+// Rango de ritmo objetivo en segundos por kilómetro. fastSecondsPerKm debe
+// ser el ritmo más rápido (número menor) y slowSecondsPerKm el más lento
+// (número mayor) -- ej. 4:50/km a 5:00/km => { fastSecondsPerKm: 290,
+// slowSecondsPerKm: 300 }.
+export interface PaceTarget {
+  fastSecondsPerKm: number;
+  slowSecondsPerKm: number;
+}
+
+function paceSecondsPerKmToSpeedMps(secondsPerKm: number): number {
+  return 1000 / secondsPerKm;
+}
 
 interface ExecutableStep {
   type: "ExecutableStepDTO";
@@ -29,7 +49,9 @@ interface ExecutableStep {
   stepType: (typeof STEP_TYPE)[keyof typeof STEP_TYPE];
   endCondition: (typeof END_CONDITION)[keyof typeof END_CONDITION];
   endConditionValue: number;
-  targetType: typeof NO_TARGET;
+  targetType: typeof NO_TARGET | typeof PACE_ZONE_TARGET;
+  targetValueOne?: number;
+  targetValueTwo?: number;
 }
 
 interface RepeatGroupStep {
@@ -53,6 +75,9 @@ export interface GarminIntervalWorkoutParams {
   recoveryType: IntervalUnit;
   recoveryValue: number;
   cooldownMinutes: number;
+  // Ritmo objetivo opcional para el paso de intervalo (no aplica a
+  // calentamiento/recuperación/enfriamiento).
+  intervalPace?: PaceTarget;
 }
 
 export interface GarminWorkoutPayload {
@@ -65,9 +90,10 @@ function buildTimedOrDistanceStep(
   order: number,
   stepType: (typeof STEP_TYPE)[keyof typeof STEP_TYPE],
   unit: IntervalUnit,
-  value: number
+  value: number,
+  pace?: PaceTarget
 ): ExecutableStep {
-  return {
+  const step: ExecutableStep = {
     type: "ExecutableStepDTO",
     stepOrder: order,
     stepType,
@@ -75,6 +101,14 @@ function buildTimedOrDistanceStep(
     endConditionValue: unit === "time" ? Math.round(value) : value,
     targetType: NO_TARGET,
   };
+
+  if (pace && pace.fastSecondsPerKm > 0 && pace.slowSecondsPerKm > 0) {
+    step.targetType = PACE_ZONE_TARGET;
+    step.targetValueOne = paceSecondsPerKmToSpeedMps(pace.slowSecondsPerKm); // límite lento = velocidad mínima
+    step.targetValueTwo = paceSecondsPerKmToSpeedMps(pace.fastSecondsPerKm); // límite rápido = velocidad máxima
+  }
+
+  return step;
 }
 
 export function buildIntervalWorkoutPayload(
@@ -89,6 +123,7 @@ export function buildIntervalWorkoutPayload(
     recoveryType,
     recoveryValue,
     cooldownMinutes,
+    intervalPace,
   } = params;
 
   let order = 1;
@@ -101,7 +136,7 @@ export function buildIntervalWorkoutPayload(
   if (repeats > 0 && intervalValue > 0) {
     const repeatOrder = order++;
     const children: ExecutableStep[] = [
-      buildTimedOrDistanceStep(order++, STEP_TYPE.interval, intervalType, intervalValue),
+      buildTimedOrDistanceStep(order++, STEP_TYPE.interval, intervalType, intervalValue, intervalPace),
     ];
 
     if (recoveryValue > 0) {
