@@ -16,6 +16,9 @@ interface FormState {
   recoveryValue: string;
   cooldownMinutes: string;
   scheduledDate: string;
+  usePaceTarget: boolean;
+  intervalPaceFast: string;
+  intervalPaceSlow: string;
 }
 
 const INITIAL: FormState = {
@@ -30,6 +33,9 @@ const INITIAL: FormState = {
   recoveryValue: "200",
   cooldownMinutes: "10",
   scheduledDate: "",
+  usePaceTarget: false,
+  intervalPaceFast: "4:50",
+  intervalPaceSlow: "5:00",
 };
 
 type Status = { kind: "idle" } | { kind: "loading" } | { kind: "success"; workoutId: string; scheduled: boolean } | { kind: "error"; message: string };
@@ -49,7 +55,11 @@ export default function CoachPage() {
       const res = await fetch("/api/coach/upload-workout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          intervalPaceFast: form.usePaceTarget ? form.intervalPaceFast : "",
+          intervalPaceSlow: form.usePaceTarget ? form.intervalPaceSlow : "",
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -205,6 +215,43 @@ export default function CoachPage() {
             />
           </label>
         </div>
+
+        <label className="flex items-center gap-2 text-sm text-foreground-dim">
+          <input
+            type="checkbox"
+            checked={form.usePaceTarget}
+            onChange={(e) => update("usePaceTarget", e.target.checked)}
+            className="h-4 w-4 accent-accent-purple"
+          />
+          Agregar ritmo objetivo al intervalo
+        </label>
+
+        {form.usePaceTarget && (
+          <div className="grid grid-cols-2 gap-3">
+            <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
+              Rápido (mm:ss/km)
+              <input
+                type="text"
+                inputMode="text"
+                placeholder="4:50"
+                value={form.intervalPaceFast}
+                onChange={(e) => update("intervalPaceFast", e.target.value)}
+                className="input-field w-full min-w-0 rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
+              Lento (mm:ss/km)
+              <input
+                type="text"
+                inputMode="text"
+                placeholder="5:00"
+                value={form.intervalPaceSlow}
+                onChange={(e) => update("intervalPaceSlow", e.target.value)}
+                className="input-field w-full min-w-0 rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
+              />
+            </label>
+          </div>
+        )}
 
         <label className="flex flex-col gap-1 text-sm text-foreground-dim">
           Programar para el día (opcional)
