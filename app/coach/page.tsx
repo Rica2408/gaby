@@ -153,7 +153,11 @@ export default function CoachPage() {
             Intervalo por
             <select
               value={form.intervalType}
-              onChange={(e) => update("intervalType", e.target.value as IntervalUnit)}
+              onChange={(e) => {
+                const next = e.target.value as IntervalUnit;
+                update("intervalType", next);
+                update("intervalValue", next === "time" ? "1:30" : "400");
+              }}
               className="input-field w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
             >
               <option value="distance">Distancia</option>
@@ -161,10 +165,12 @@ export default function CoachPage() {
             </select>
           </label>
           <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
-            {form.intervalType === "time" ? "Duración del intervalo (seg)" : "Distancia del intervalo (m)"}
+            {form.intervalType === "time" ? "Duración del intervalo (mm:ss)" : "Distancia del intervalo (m)"}
             <input
-              type="number"
-              min={0}
+              type={form.intervalType === "time" ? "text" : "number"}
+              inputMode={form.intervalType === "time" ? "text" : "numeric"}
+              min={form.intervalType === "time" ? undefined : 0}
+              placeholder={form.intervalType === "time" ? "4:10" : undefined}
               value={form.intervalValue}
               onChange={(e) => update("intervalValue", e.target.value)}
               className="input-field w-full min-w-0 rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
@@ -175,7 +181,11 @@ export default function CoachPage() {
             Recuperación por
             <select
               value={form.recoveryType}
-              onChange={(e) => update("recoveryType", e.target.value as IntervalUnit)}
+              onChange={(e) => {
+                const next = e.target.value as IntervalUnit;
+                update("recoveryType", next);
+                update("recoveryValue", next === "time" ? "1:00" : "200");
+              }}
               className="input-field w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
             >
               <option value="distance">Distancia</option>
@@ -183,10 +193,12 @@ export default function CoachPage() {
             </select>
           </label>
           <label className="flex flex-col gap-1 text-sm text-foreground-dim min-w-0">
-            {form.recoveryType === "time" ? "Duración de la recuperación (seg)" : "Distancia de la recuperación (m)"}
+            {form.recoveryType === "time" ? "Duración de la recuperación (mm:ss)" : "Distancia de la recuperación (m)"}
             <input
-              type="number"
-              min={0}
+              type={form.recoveryType === "time" ? "text" : "number"}
+              inputMode={form.recoveryType === "time" ? "text" : "numeric"}
+              min={form.recoveryType === "time" ? undefined : 0}
+              placeholder={form.recoveryType === "time" ? "1:00" : undefined}
               value={form.recoveryValue}
               onChange={(e) => update("recoveryValue", e.target.value)}
               className="input-field w-full min-w-0 rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent-purple"
